@@ -90,9 +90,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             LocalLogSystem.init(FolderUtil.getSDRoot() + "AppLocalLogTest")
                                     //日志文件内容的编码，默认 utf-8
                                     .setCharset(Charset.forName("UTF-8"))
-                                    //日志文件名成前缀，默认“Log”
+                                    //日志文件名称前缀，默认“Log”
                                     .setFileName("App")
-                                    //日志文件后缀按时间生成日志文件，此列为每小时一份
+                                    //日志文件后缀按时间生成日志文件，此为每小时一份文件
                                     .setLogTimeSection(LogTimeSectionEnum.YYYY_MM_DD_HH)
                                     //完成初始化，并成为观察者，此时才会接收日志打印事件
                                     .complete();
