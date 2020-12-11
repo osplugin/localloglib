@@ -18,6 +18,7 @@ import com.mjsoftking.localloglib.event.LogExceptionEvent;
 import com.mjsoftking.localloglib.event.LogInfoEvent;
 import com.mjsoftking.localloglib.event.LogRuntimeEvent;
 import com.mjsoftking.localloglib.util.FolderUtil;
+import com.mjsoftking.localloglib.util.LocalLogPrintUtils;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import org.greenrobot.eventbus.EventBus;
@@ -53,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Random random = new Random();
             int r = random.nextInt(10000);
 
+            //todo 第一种方案
             try {
                 EventBus.getDefault().post(new LogCommonEvent("这是一个普通级别日志: " + r));
                 EventBus.getDefault().post(new LogCustomEvent("自定义", "这是一个自定义级别日志: " + r));
@@ -63,6 +65,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 throw new RuntimeException("这是一个测试异常");
             } catch (Exception e) {
                 EventBus.getDefault().post(new LogExceptionEvent("这是一个Exception级别日志: " + r, e));
+            }
+
+            //todo 第二种方案， 推荐方案
+            try {
+                LocalLogPrintUtils.commonPrintf("这是一个普通级别日志: " + r);
+                LocalLogPrintUtils.customPrintf("自定义", "这是一个自定义级别日志: " + r);
+                LocalLogPrintUtils.debugPrintf("这是一个Debug级别日志: " + r);
+                LocalLogPrintUtils.infoPrintf("这是一个Info级别日志: " + r);
+                LocalLogPrintUtils.runtimePrintf("这是一个Runtime级别日志: " + r);
+
+                throw new RuntimeException("这是一个测试异常");
+            } catch (Exception e) {
+                LocalLogPrintUtils.exceptionPrintf("这是一个Exception级别日志: " + r, e);
             }
         }
     }
