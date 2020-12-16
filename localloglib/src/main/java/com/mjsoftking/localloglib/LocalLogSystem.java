@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import com.mjsoftking.localloglib.enumerate.LogTimeSectionEnum;
 import com.mjsoftking.localloglib.event.BaseLogMessageEvent;
 import com.mjsoftking.localloglib.event.LogCommonEvent;
+import com.mjsoftking.localloglib.inter.ILocalLogFileAppendName;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -72,6 +73,20 @@ public class LocalLogSystem {
     private Charset charset;
 
     /**
+     * 打印文件的文件名后缀
+     * <p>
+     * 默认 log
+     */
+    private String fileSuffix;
+
+    /**
+     * 打印文件的文件名后的附件名，附加名可以是动态获取的，每次打印时获取，如果报错或null，则为""
+     * <p>
+     * 默认 ""
+     */
+    private ILocalLogFileAppendName localLogFileAppendName;
+
+    /**
      * 日志文件名分段
      * <p>
      * 每份日志文件按照 年/年月/年月日/年月日时 级别分段
@@ -111,6 +126,30 @@ public class LocalLogSystem {
         return logTimeSection;
     }
 
+    protected String getFileSuffix() {
+        if (TextUtils.isEmpty(fileSuffix)) {
+            fileSuffix = "log";
+        }
+        return fileSuffix;
+    }
+
+    protected ILocalLogFileAppendName getLocalLogFileAppendName() {
+        if (null == localLogFileAppendName) {
+            localLogFileAppendName = () -> "";
+        }
+        return localLogFileAppendName;
+    }
+
+    public LocalLogSystem setLocalLogFileAppendName(ILocalLogFileAppendName localLogFileAppendName) {
+        this.localLogFileAppendName = localLogFileAppendName;
+        return this;
+    }
+
+    public LocalLogSystem setFileSuffix(String fileSuffix) {
+        this.fileSuffix = fileSuffix;
+        return this;
+    }
+
     public LocalLogSystem setFileName(String fileName) {
         this.fileName = fileName;
         return this;
@@ -146,12 +185,20 @@ public class LocalLogSystem {
             BufferedWriter bw = null;
             String datetime;
             try {
+                String appendName = "";
+                try {
+                    appendName = getLocalLogFileAppendName().appendName();
+                    appendName = (null == appendName ? "" : appendName);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 String logName = getFolderName() +
                         getFileName() +
                         (TextUtils.isEmpty(event.getLogFileLevel()) || event instanceof LogCommonEvent ? "" : ("-" + event.getLogFileLevel())) +
+                        appendName +
                         (null == getLogTimeSection() ? "" :
                                 " " + new SimpleDateFormat(getLogTimeSection().getLabel()).format(new Date())) +
-                        ".log";
+                        "." + getFileSuffix();
 
                 File file = new File(logName);
                 if (!file.exists()) {
