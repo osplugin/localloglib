@@ -108,13 +108,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                     //日志文件名称前缀，默认“Log”
                                     .setFileName("App")
                                     //日志文件后缀按时间生成日志文件，此为每小时一份文件
-                                    .setLogTimeSection(LogTimeSectionEnum.YYYY_MM_DD_HH)
+                                    .setLogTimeSection(LogTimeSectionEnum.YYYY_MM_DD)
                                     //打印文件的文件名后缀，默认 “log”
                                     .setFileSuffix("log")
+                                    //级别与“文件名”的衔接符，级别不存在时无效
+                                    .setLevelPrefix("-")
+                                    //附加名与“级别”或“文件名”的衔接符，附加名不存在时无效
+                                    .setAppendNamePrefix("-")
+                                    //时间分段与“附加名”或“级别”或“文件名”的衔接符，时间分段不存在时无效
+                                    .setDateTimePrefix("-")
                                     .setLocalLogFileAppendName(() -> {
                                         //附加数据此数据可以在运行后动态修改，为null、异常、均会按照""处理，例如登录后可以附加名字
-                                        //显示在文件名上的追加内容，附加在级别后，默认无间隔，可以在前面增加一个" "。
-                                        return " " + "名字";
+                                        return "名字";
                                     })
                                     //完成初始化，并成为观察者，此时才会接收日志打印事件
                                     .complete();
