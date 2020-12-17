@@ -77,14 +77,36 @@ public class LocalLogSystem {
      * <p>
      * 默认 log
      */
-    private String fileSuffix;
+    private String fileSuffix = "log";
 
     /**
-     * 打印文件的文件名后的附件名，附加名可以是动态获取的，每次打印时获取，如果报错或null，则为""
+     * 打印文件的文件名后的附加名，附加名可以是动态获取的，每次打印时获取，如果报错或null，则为""
      * <p>
      * 默认 ""
      */
     private ILocalLogFileAppendName localLogFileAppendName;
+
+
+    /**
+     * 打印文件的文件名后“级别”存在时的衔接前缀
+     * <p>
+     * 默认 "-"
+     */
+    private String levelPrefix = "-";
+
+    /**
+     * 打印文件的文件名后“附加名”存在时的衔接前缀
+     * <p>
+     * 默认 "-"
+     */
+    private String appendNamePrefix = "-";
+
+    /**
+     * 打印文件的文件名后“时间分段”存在时的衔接前缀
+     * <p>
+     * 默认 "-"
+     */
+    private String dateTimePrefix = "-";
 
     /**
      * 日志文件名分段
@@ -127,9 +149,6 @@ public class LocalLogSystem {
     }
 
     protected String getFileSuffix() {
-        if (TextUtils.isEmpty(fileSuffix)) {
-            fileSuffix = "log";
-        }
         return fileSuffix;
     }
 
@@ -138,6 +157,43 @@ public class LocalLogSystem {
             localLogFileAppendName = () -> "";
         }
         return localLogFileAppendName;
+    }
+
+    protected String getLevelPrefix() {
+        if(TextUtils.isEmpty(levelPrefix)){
+            levelPrefix = "";
+        }
+        return levelPrefix;
+    }
+
+    protected String getAppendNamePrefix() {
+        if(TextUtils.isEmpty(appendNamePrefix)){
+            appendNamePrefix = "";
+        }
+        return appendNamePrefix;
+    }
+
+    protected String getDateTimePrefix() {
+        if(TextUtils.isEmpty(dateTimePrefix)){
+            dateTimePrefix = "";
+        }
+        return dateTimePrefix;
+    }
+
+    public LocalLogSystem setLevelPrefix(String levelPrefix) {
+        this.levelPrefix = levelPrefix;
+        return this;
+    }
+
+
+    public LocalLogSystem setAppendNamePrefix(String appendNamePrefix) {
+        this.appendNamePrefix = appendNamePrefix;
+        return this;
+    }
+
+    public LocalLogSystem setDateTimePrefix(String dateTimePrefix) {
+        this.dateTimePrefix = dateTimePrefix;
+        return this;
     }
 
     public LocalLogSystem setLocalLogFileAppendName(ILocalLogFileAppendName localLogFileAppendName) {
@@ -188,17 +244,17 @@ public class LocalLogSystem {
                 String appendName = "";
                 try {
                     appendName = getLocalLogFileAppendName().appendName();
-                    appendName = (null == appendName ? "" : appendName);
+                    appendName = (null == appendName ? "" : (getAppendNamePrefix() + appendName));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
                 String logName = getFolderName() +
                         getFileName() +
-                        (TextUtils.isEmpty(event.getLogFileLevel()) || event instanceof LogCommonEvent ? "" : ("-" + event.getLogFileLevel())) +
+                        (TextUtils.isEmpty(event.getLogFileLevel()) || event instanceof LogCommonEvent ? "" : (getLevelPrefix() + event.getLogFileLevel())) +
                         appendName +
                         (null == getLogTimeSection() ? "" :
-                                " " + new SimpleDateFormat(getLogTimeSection().getLabel()).format(new Date())) +
-                        "." + getFileSuffix();
+                                (getDateTimePrefix() + new SimpleDateFormat(getLogTimeSection().getLabel()).format(new Date()))) +
+                        (TextUtils.isEmpty(getFileSuffix()) ? "" : ("." + getFileSuffix()));
 
                 File file = new File(logName);
                 if (!file.exists()) {
