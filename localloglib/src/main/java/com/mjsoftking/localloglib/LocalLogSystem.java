@@ -1,7 +1,6 @@
 package com.mjsoftking.localloglib;
 
 
-import android.annotation.SuppressLint;
 import android.text.TextUtils;
 
 import com.mjsoftking.localloglib.enumerate.LogTimeSectionEnum;
@@ -20,6 +19,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * 本地日志系统
@@ -232,7 +232,6 @@ public class LocalLogSystem {
     /**
      * 打印日志，不可主动调用
      */
-    @SuppressLint("SimpleDateFormat")
     @Subscribe(threadMode = ThreadMode.ASYNC)
     public void printf(BaseLogMessageEvent event) {
         //intern 保证是存储在内存常量中，是同一个对象
@@ -253,7 +252,7 @@ public class LocalLogSystem {
                         (TextUtils.isEmpty(event.getLogFileLevel()) || event instanceof LogCommonEvent ? "" : (getLevelPrefix() + event.getLogFileLevel())) +
                         appendName +
                         (null == getLogTimeSection() ? "" :
-                                (getDateTimePrefix() + new SimpleDateFormat(getLogTimeSection().getLabel()).format(new Date()))) +
+                                (getDateTimePrefix() + new SimpleDateFormat(getLogTimeSection().getLabel(), Locale.getDefault()).format(new Date()))) +
                         (TextUtils.isEmpty(getFileSuffix()) ? "" : ("." + getFileSuffix()));
 
                 File file = new File(logName);
@@ -261,7 +260,7 @@ public class LocalLogSystem {
                     file.createNewFile();
                 }
 
-                SimpleDateFormat tempDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                SimpleDateFormat tempDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
                 datetime = tempDate.format(new Date());
                 fw = new FileWriter(file, true);
                 // 创建FileWriter对象，用来写入字符流
