@@ -160,21 +160,21 @@ public class LocalLogSystem {
     }
 
     protected String getLevelPrefix() {
-        if(TextUtils.isEmpty(levelPrefix)){
+        if (TextUtils.isEmpty(levelPrefix)) {
             levelPrefix = "";
         }
         return levelPrefix;
     }
 
     protected String getAppendNamePrefix() {
-        if(TextUtils.isEmpty(appendNamePrefix)){
+        if (TextUtils.isEmpty(appendNamePrefix)) {
             appendNamePrefix = "";
         }
         return appendNamePrefix;
     }
 
     protected String getDateTimePrefix() {
-        if(TextUtils.isEmpty(dateTimePrefix)){
+        if (TextUtils.isEmpty(dateTimePrefix)) {
             dateTimePrefix = "";
         }
         return dateTimePrefix;
