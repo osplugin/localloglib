@@ -17,12 +17,12 @@ import com.mjsoftking.localloglib.event.LogDebugEvent;
 import com.mjsoftking.localloglib.event.LogExceptionEvent;
 import com.mjsoftking.localloglib.event.LogInfoEvent;
 import com.mjsoftking.localloglib.event.LogRuntimeEvent;
-import com.mjsoftking.localloglib.util.FolderUtil;
 import com.mjsoftking.localloglib.util.LocalLogPrintUtils;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.io.File;
 import java.nio.charset.Charset;
 import java.util.Random;
 
@@ -101,8 +101,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     public void onNext(@Nullable Boolean aBoolean) {
                         if (aBoolean) {
                             //todo 初始化日志系统，不可主动调用 printf 方法
-                            //初始化参数为日志文件所在文件夹，不可为空
-                            LocalLogSystem.init(FolderUtil.getSDRoot() + "AppLocalLogTest")
+                            //初始化参数为日志文件所在文件夹，不可为空，存放在 存储-Android-data-包名-files-logs文件下
+                            LocalLogSystem.init(getExternalFilesDir("").getAbsolutePath() + File.separator + "logs")
                                     //日志文件内容的编码，默认 utf-8
                                     .setCharset(Charset.forName("UTF-8"))
                                     //日志文件名称前缀，默认“Log”
