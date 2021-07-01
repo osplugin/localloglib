@@ -1,4 +1,6 @@
 # LocalLogApp
+[![License](https://img.shields.io/badge/License%20-Apache%202-337ab7.svg)](https://www.apache.org/licenses/LICENSE-2.0)
+[![API](https://img.shields.io/badge/API-16%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=16)
 [![](https://jitpack.io/v/com.gitee.mjsoftking/localloglib.svg)](https://jitpack.io/#com.gitee.mjsoftking/localloglib)
 
 ### 一、介绍
