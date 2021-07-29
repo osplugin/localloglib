@@ -27,7 +27,8 @@ allprojects {
 ```
 dependencies {
     ...
-    implementation 'com.gitee.mjsoftking:localloglib:1.0.0'
+    implementation 'com.gitee.osard:localloglib:1.0.0'
+    implementation 'org.greenrobot:eventbus:3.2.0'
 }
 ```
 ### 三、使用
