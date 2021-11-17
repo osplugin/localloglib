@@ -187,7 +187,7 @@ public class LocalLogPrintUtils {
     }
 
     public static void exceptionPrintf(String msg, boolean print) {
-        exceptionPrintf(msg, null, print);
+        exceptionPrintf(msg, null, print, false);
     }
 
     /**
@@ -196,12 +196,30 @@ public class LocalLogPrintUtils {
      * @param print 是否打印，针对特定模式下不需要打印部分日志
      */
     public static void exceptionPrintf(String msg, Throwable e, boolean print) {
-        if (print) {
-            EventBus.getDefault().post(new LogExceptionEvent(msg, e));
-        }
+        exceptionPrintf(msg, e, print, false);
     }
 
     public static void exceptionPrintf(Throwable e, boolean print) {
-        exceptionPrintf(null, e, print);
+        exceptionPrintf(null, e, print, false);
+    }
+
+    public static void exceptionPrintf(String msg, boolean print, boolean localLogFileAppendName) {
+        exceptionPrintf(msg, null, print, localLogFileAppendName);
+    }
+
+    /**
+     * @param msg   文本描述
+     * @param e     异常对象
+     * @param print 是否打印，针对特定模式下不需要打印部分日志
+     * @param localLogFileAppendName 是否追加文件名后的附加名，即接口获取的参数部分。
+     */
+    public static void exceptionPrintf(String msg, Throwable e, boolean print, boolean localLogFileAppendName) {
+        if (print) {
+            EventBus.getDefault().post(new LogExceptionEvent(msg, e, localLogFileAppendName));
+        }
+    }
+
+    public static void exceptionPrintf(Throwable e, boolean print, boolean localLogFileAppendName) {
+        exceptionPrintf(null, e, print, localLogFileAppendName);
     }
 }

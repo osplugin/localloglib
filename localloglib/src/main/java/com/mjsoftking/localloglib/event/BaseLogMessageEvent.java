@@ -34,6 +34,14 @@ public abstract class BaseLogMessageEvent {
      */
     public abstract String getLogFileLevel();
 
+    /**
+     * 是否在部分类型日志下追加文件名后的附加名
+     *
+     * @return 默认追加
+     */
+    public boolean isLocalLogFileAppendName() {
+        return true;
+    }
 
     public String getMsg() {
         if (null == msg) {

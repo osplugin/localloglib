@@ -243,7 +243,7 @@ public class LocalLogSystem {
                 String appendName = "";
                 try {
                     appendName = getLocalLogFileAppendName().appendName();
-                    appendName = (null == appendName ? "" : (getAppendNamePrefix() + appendName));
+                    appendName = (!TextUtils.isEmpty(appendName) && event.isLocalLogFileAppendName() ? (getAppendNamePrefix() + appendName) : "");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
