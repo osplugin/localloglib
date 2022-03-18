@@ -238,7 +238,7 @@ public class LocalLogSystem {
         synchronized (event.getLogFileLevel().intern()) {
             FileWriter fw = null;
             BufferedWriter bw = null;
-            String datetime;
+            String datetime = event.getTime();
             try {
                 String appendName = "";
                 try {
@@ -260,8 +260,11 @@ public class LocalLogSystem {
                     file.createNewFile();
                 }
 
-                SimpleDateFormat tempDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-                datetime = tempDate.format(new Date());
+                if (TextUtils.isEmpty(datetime)) {
+                    SimpleDateFormat tempDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                    datetime = tempDate.format(new Date());
+                }
+
                 fw = new FileWriter(file, true);
                 // 创建FileWriter对象，用来写入字符流
                 bw = new BufferedWriter(fw);

@@ -27,9 +27,33 @@ public class LogCustomEvent extends BaseLogMessageEvent {
         this.logFileLevel = logFileLevel;
     }
 
+    public LogCustomEvent(String logFileLevel, String msg, String time) {
+        super(msg, time);
+        if (TextUtils.isEmpty(logFileLevel) || Arrays.asList("", "").contains(logFileLevel)) {
+            throw new NullPointerException("logFileLevel 日志级别不能为空");
+        }
+        this.logFileLevel = logFileLevel;
+    }
+
+    public LogCustomEvent(String logFileLevel, String msg, Throwable e, String time) {
+        super(msg, e, time);
+        if (TextUtils.isEmpty(logFileLevel) || Arrays.asList("", "").contains(logFileLevel)) {
+            throw new NullPointerException("logFileLevel 日志级别不能为空");
+        }
+        this.logFileLevel = logFileLevel;
+    }
+
     public LogCustomEvent(String logFileLevel, String msg, Throwable e) {
         super(msg, e);
         if (TextUtils.isEmpty(logFileLevel)) {
+            throw new NullPointerException("logFileLevel 日志级别不能为空");
+        }
+        this.logFileLevel = logFileLevel;
+    }
+
+    public LogCustomEvent(String logFileLevel, Throwable e, String time) {
+        super(e, time);
+        if (TextUtils.isEmpty(logFileLevel) || Arrays.asList("", "").contains(logFileLevel)) {
             throw new NullPointerException("logFileLevel 日志级别不能为空");
         }
         this.logFileLevel = logFileLevel;

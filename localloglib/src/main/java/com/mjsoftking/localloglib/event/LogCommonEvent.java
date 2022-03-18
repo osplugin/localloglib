@@ -9,12 +9,24 @@ public class LogCommonEvent extends BaseLogMessageEvent {
         super(e);
     }
 
+    public LogCommonEvent(Throwable e, String time) {
+        super(e, time);
+    }
+
     public LogCommonEvent(String msg) {
         super(msg);
     }
 
+    public LogCommonEvent(String msg, String time) {
+        super(msg, time);
+    }
+
     public LogCommonEvent(String msg, Throwable e) {
         super(msg, e);
+    }
+
+    public LogCommonEvent(String msg, Throwable e, String time) {
+        super(msg, e, time);
     }
 
     /**

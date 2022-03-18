@@ -9,12 +9,24 @@ public class LogDebugEvent extends BaseLogMessageEvent {
         super(e);
     }
 
+    public LogDebugEvent(Throwable e, String time) {
+        super(e, time);
+    }
+
     public LogDebugEvent(String msg) {
         super(msg);
     }
 
+    public LogDebugEvent(String msg, String time) {
+        super(msg, time);
+    }
+
     public LogDebugEvent(String msg, Throwable e) {
         super(msg, e);
+    }
+
+    public LogDebugEvent(String msg, Throwable e, String time) {
+        super(msg, e, time);
     }
 
     /**

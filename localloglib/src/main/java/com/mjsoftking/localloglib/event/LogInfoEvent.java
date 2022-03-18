@@ -9,12 +9,24 @@ public class LogInfoEvent extends BaseLogMessageEvent {
         super(e);
     }
 
+    public LogInfoEvent(Throwable e, String time) {
+        super(e, time);
+    }
+
     public LogInfoEvent(String msg) {
         super(msg);
     }
 
+    public LogInfoEvent(String msg, String time) {
+        super(msg, time);
+    }
+
     public LogInfoEvent(String msg, Throwable e) {
         super(msg, e);
+    }
+
+    public LogInfoEvent(String msg, Throwable e, String time) {
+        super(msg, e, time);
     }
 
     /**

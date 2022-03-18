@@ -22,13 +22,28 @@ public class LogExceptionEvent extends BaseLogMessageEvent {
         this.localLogFileAppendName = localLogFileAppendName;
     }
 
+    public LogExceptionEvent(Throwable e, String time, boolean localLogFileAppendName) {
+        super(e, time);
+        this.localLogFileAppendName = localLogFileAppendName;
+    }
+
     public LogExceptionEvent(String msg, boolean localLogFileAppendName) {
         super(msg);
         this.localLogFileAppendName = localLogFileAppendName;
     }
 
+    public LogExceptionEvent(String msg, String time, boolean localLogFileAppendName) {
+        super(msg, time);
+        this.localLogFileAppendName = localLogFileAppendName;
+    }
+
     public LogExceptionEvent(String msg, Throwable e, boolean localLogFileAppendName) {
         super(msg, e);
+        this.localLogFileAppendName = localLogFileAppendName;
+    }
+
+    public LogExceptionEvent(String msg, Throwable e, String time, boolean localLogFileAppendName) {
+        super(msg, e, time);
         this.localLogFileAppendName = localLogFileAppendName;
     }
 

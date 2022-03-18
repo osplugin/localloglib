@@ -18,6 +18,10 @@ public class LocalLogPrintUtils {
         commonPrintf(msg, null, true);
     }
 
+    public static void commonPrintf(String msg, String time) {
+        commonPrintf(msg, null, true, time);
+    }
+
     public static void commonPrintf(String msg, Throwable e) {
         commonPrintf(msg, e, true);
     }
@@ -30,24 +34,41 @@ public class LocalLogPrintUtils {
         commonPrintf(msg, null, print);
     }
 
-    /**
-     * @param msg   文本描述
-     * @param e     异常对象
-     * @param print 是否打印，针对特定模式下不需要打印部分日志
-     */
-    public static void commonPrintf(String msg, Throwable e, boolean print) {
-        if (print) {
-            EventBus.getDefault().post(new LogCommonEvent(msg, e));
-        }
+    public static void commonPrintf(String msg, boolean print, String time) {
+        commonPrintf(msg, null, print, time);
     }
 
     public static void commonPrintf(Throwable e, boolean print) {
         commonPrintf(null, e, print);
     }
 
+    /**
+     * @param msg   文本描述
+     * @param e     异常对象
+     * @param print 是否打印，针对特定模式下不需要打印部分日志
+     */
+    public static void commonPrintf(String msg, Throwable e, boolean print) {
+        commonPrintf(msg, e, print, null);
+    }
+
+    /**
+     * @param msg   文本描述
+     * @param e     异常对象
+     * @param print 是否打印，针对特定模式下不需要打印部分日志
+     */
+    public static void commonPrintf(String msg, Throwable e, boolean print, String time) {
+        if (print) {
+            EventBus.getDefault().post(new LogCommonEvent(msg, e, time));
+        }
+    }
+
 
     public static void customPrintf(String logFileLevel, String msg) {
         customPrintf(logFileLevel, msg, null, true);
+    }
+
+    public static void customPrintf(String logFileLevel, String msg, String time) {
+        customPrintf(logFileLevel, msg, null, true, time);
     }
 
     public static void customPrintf(String logFileLevel, String msg, Throwable e) {
@@ -62,19 +83,32 @@ public class LocalLogPrintUtils {
         customPrintf(logFileLevel, msg, null, print);
     }
 
+    public static void customPrintf(String logFileLevel, String msg, boolean print, String time) {
+        customPrintf(logFileLevel, msg, null, print, time);
+    }
+
+    public static void customPrintf(String logFileLevel, Throwable e, boolean print) {
+        customPrintf(logFileLevel, null, e, print);
+    }
+
     /**
      * @param msg   文本描述
      * @param e     异常对象
      * @param print 是否打印，针对特定模式下不需要打印部分日志
      */
     public static void customPrintf(String logFileLevel, String msg, Throwable e, boolean print) {
-        if (print) {
-            EventBus.getDefault().post(new LogCustomEvent(logFileLevel, msg, e));
-        }
+        customPrintf(logFileLevel, msg, e, print, null);
     }
 
-    public static void customPrintf(String logFileLevel, Throwable e, boolean print) {
-        customPrintf(logFileLevel, null, e, print);
+    /**
+     * @param msg   文本描述
+     * @param e     异常对象
+     * @param print 是否打印，针对特定模式下不需要打印部分日志
+     */
+    public static void customPrintf(String logFileLevel, String msg, Throwable e, boolean print, String time) {
+        if (print) {
+            EventBus.getDefault().post(new LogCustomEvent(logFileLevel, msg, e, time));
+        }
     }
 
 
@@ -94,6 +128,10 @@ public class LocalLogPrintUtils {
         debugPrintf(msg, null, print);
     }
 
+    public static void debugPrintf(Throwable e, boolean print) {
+        debugPrintf(null, e, print);
+    }
+
     /**
      * @param msg   文本描述
      * @param e     异常对象
@@ -103,10 +141,6 @@ public class LocalLogPrintUtils {
         if (print) {
             EventBus.getDefault().post(new LogDebugEvent(msg, e));
         }
-    }
-
-    public static void debugPrintf(Throwable e, boolean print) {
-        debugPrintf(null, e, print);
     }
 
 
@@ -126,6 +160,10 @@ public class LocalLogPrintUtils {
         infoPrintf(msg, null, print);
     }
 
+    public static void infoPrintf(Throwable e, boolean print) {
+        infoPrintf(null, e, print);
+    }
+
     /**
      * @param msg   文本描述
      * @param e     异常对象
@@ -135,10 +173,6 @@ public class LocalLogPrintUtils {
         if (print) {
             EventBus.getDefault().post(new LogInfoEvent(msg, e));
         }
-    }
-
-    public static void infoPrintf(Throwable e, boolean print) {
-        infoPrintf(null, e, print);
     }
 
 
@@ -158,6 +192,10 @@ public class LocalLogPrintUtils {
         runtimePrintf(msg, null, print);
     }
 
+    public static void runtimePrintf(Throwable e, boolean print) {
+        runtimePrintf(null, e, print);
+    }
+
     /**
      * @param msg   文本描述
      * @param e     异常对象
@@ -167,10 +205,6 @@ public class LocalLogPrintUtils {
         if (print) {
             EventBus.getDefault().post(new LogRuntimeEvent(msg, e));
         }
-    }
-
-    public static void runtimePrintf(Throwable e, boolean print) {
-        runtimePrintf(null, e, print);
     }
 
 
@@ -190,11 +224,6 @@ public class LocalLogPrintUtils {
         exceptionPrintf(msg, null, print, false);
     }
 
-    /**
-     * @param msg   文本描述
-     * @param e     异常对象
-     * @param print 是否打印，针对特定模式下不需要打印部分日志
-     */
     public static void exceptionPrintf(String msg, Throwable e, boolean print) {
         exceptionPrintf(msg, e, print, false);
     }
@@ -207,10 +236,14 @@ public class LocalLogPrintUtils {
         exceptionPrintf(msg, null, print, localLogFileAppendName);
     }
 
+    public static void exceptionPrintf(Throwable e, boolean print, boolean localLogFileAppendName) {
+        exceptionPrintf(null, e, print, localLogFileAppendName);
+    }
+
     /**
-     * @param msg   文本描述
-     * @param e     异常对象
-     * @param print 是否打印，针对特定模式下不需要打印部分日志
+     * @param msg                    文本描述
+     * @param e                      异常对象
+     * @param print                  是否打印，针对特定模式下不需要打印部分日志
      * @param localLogFileAppendName 是否追加文件名后的附加名，即接口获取的参数部分。
      */
     public static void exceptionPrintf(String msg, Throwable e, boolean print, boolean localLogFileAppendName) {
@@ -219,7 +252,4 @@ public class LocalLogPrintUtils {
         }
     }
 
-    public static void exceptionPrintf(Throwable e, boolean print, boolean localLogFileAppendName) {
-        exceptionPrintf(null, e, print, localLogFileAppendName);
-    }
 }

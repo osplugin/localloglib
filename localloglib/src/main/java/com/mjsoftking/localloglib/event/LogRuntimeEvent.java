@@ -9,12 +9,24 @@ public class LogRuntimeEvent extends BaseLogMessageEvent {
         super(e);
     }
 
+    public LogRuntimeEvent(Throwable e, String time) {
+        super(e, time);
+    }
+
     public LogRuntimeEvent(String msg) {
         super(msg);
     }
 
+    public LogRuntimeEvent(String msg, String time) {
+        super(msg, time);
+    }
+
     public LogRuntimeEvent(String msg, Throwable e) {
         super(msg, e);
+    }
+
+    public LogRuntimeEvent(String msg, Throwable e, String time) {
+        super(msg, e, time);
     }
 
     /**
