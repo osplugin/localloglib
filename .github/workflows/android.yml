@@ -1,0 +1,112 @@
+name: Build AARs and Upload to Release
+
+on:
+  release:
+    types: [published]
+
+env:
+  LIB1_NAME: localloglib
+
+jobs:
+  build-and-upload:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write  # 必须添加这个权限
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # 添加执行权限
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v2
+
+      - name: Build all AARs
+        run: |
+          ./gradlew clean
+          ./gradlew :${{ env.LIB1_NAME }}:assembleRelease
+
+      - name: Upload AARs to Release (${{ env.LIB1_NAME }})
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ${{ env.LIB1_NAME }}/build/outputs/aar/${{ env.LIB1_NAME }}-release.aar
+          asset_name: ${{ env.LIB1_NAME }}-release.aar
+          asset_content_type: application/octet-stream
+
+      - name: Verify Release Tag
+        run: |
+          # 严格校验Tag格式（支持v前缀和纯数字版本）
+          if [[ ! "${{ github.event.release.tag_name }}" =~ ^v?[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Invalid tag format. Must be like 1.0.0 or v1.0.0"
+            exit 1
+          fi
+
+      - name: Trigger JitPack Build
+        env:
+          JITPACK_TOKEN: ${{ secrets.JITPACK_TOKEN }} # GitHub PAT with repo scope
+        run: |
+          # Keep original tag format (preserve 'v' prefix)
+          VERSION=${{ github.event.release.tag_name }}
+          OWNER=${{ github.repository_owner }}
+          REPO=${{ github.event.repository.name }}
+
+          echo "Triggering build for: com.github.$OWNER/$REPO@$VERSION"
+
+          # JitPack API endpoint
+          API_URL="https://jitpack.io/api/builds/com.github.$OWNER/$REPO/$VERSION"
+
+          # Fixed 6 attempts with 10-second intervals
+          ATTEMPTS=6
+          RETRY_INTERVAL=30
+
+          for ((ATTEMPT=1; ATTEMPT<=ATTEMPTS; ATTEMPT++)); do
+            echo "Making API call $ATTEMPT of $ATTEMPTS"
+          
+            # Make authenticated request
+            RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}" \
+              -H "Authorization: Bearer $JITPACK_TOKEN" \
+              "$API_URL")
+
+            # Extract HTTP status and response body
+            HTTP_STATUS=$(echo "$RESPONSE" | grep HTTP_STATUS: | cut -d':' -f2)
+            BODY=$(echo "$RESPONSE" | sed '/HTTP_STATUS:/d')
+
+            echo "API Response: $BODY"
+            echo "HTTP Status: $HTTP_STATUS"
+
+            if [[ "$HTTP_STATUS" == "200" ]]; then
+              echo "✅ Attempt $ATTEMPT: Successfully triggered JitPack build!"
+            else
+              echo "⚠️ Attempt $ATTEMPT: Failed with status $HTTP_STATUS"
+            fi
+
+            # Wait before next attempt (except after last one)
+            if [ $ATTEMPT -lt $ATTEMPTS ]; then
+              echo "Waiting $RETRY_INTERVAL seconds before next attempt..."
+              sleep $RETRY_INTERVAL
+            fi
+          done
+
+          echo "Completed all $ATTEMPTS API calls"
+
+      - name: Monitor Build Status
+        run: |
+          VERSION=${{ github.event.release.tag_name }}
+          echo "Monitor build progress at:"
+          echo "https://jitpack.io/#${{ github.repository }}/$VERSION"
+          echo "Note: Building may take 3-5 minutes"
