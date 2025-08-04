@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.library'
-    id 'com.github.dcendents.android-maven'
+    //添加插件
+    id 'maven-publish'
 }
 
 group='com.gitee.osard'
@@ -33,4 +34,19 @@ android {
 
 dependencies {
     implementation 'org.greenrobot:eventbus:3.2.0'
+}
+
+//注意放置位置，复制此段代码稍加修改即可
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                //和你的仓库地址的反写一致，此处不会修改最终发布的组件依赖名
+                groupId = 'com.github.osplugin'
+                //单组件时和你的仓库名一致，多组件时根据实际起自己的名字
+                artifactId = 'localloglib'
+            }
+        }
+    }
 }
