@@ -5,7 +5,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.2.1'
+        classpath 'com.android.tools.build:gradle:7.4.2'
 
         //1.自动化maven打包插件
         classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
