@@ -70,39 +70,48 @@ jobs:
           # JitPack API endpoint
           API_URL="https://jitpack.io/api/builds/com.github.$OWNER/$REPO/$VERSION"
 
-          # Fixed 6 attempts with 10-second intervals
-          ATTEMPTS=6
-          RETRY_INTERVAL=30
+          # Make initial build request
+          echo "Making initial build request"
+          RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}" \
+            -H "Authorization: Bearer $JITPACK_TOKEN" \
+            "$API_URL")
 
-          for ((ATTEMPT=1; ATTEMPT<=ATTEMPTS; ATTEMPT++)); do
-            echo "Making API call $ATTEMPT of $ATTEMPTS"
-          
-            # Make authenticated request
-            RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}" \
+          # Extract HTTP status and response body
+          HTTP_STATUS=$(echo "$RESPONSE" | grep HTTP_STATUS: | cut -d':' -f2)
+          BODY=$(echo "$RESPONSE" | sed '/HTTP_STATUS:/d')
+
+          echo "Initial API Response: $BODY"
+          echo "HTTP Status: $HTTP_STATUS"
+
+          if [[ "$HTTP_STATUS" != "200" ]]; then
+            echo "❌ Failed to trigger build (HTTP $HTTP_STATUS)"
+            exit 1
+          fi
+
+          # Check build status periodically
+          while true; do
+            echo "Checking build status..."
+            STATUS_RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}" \
               -H "Authorization: Bearer $JITPACK_TOKEN" \
               "$API_URL")
 
-            # Extract HTTP status and response body
-            HTTP_STATUS=$(echo "$RESPONSE" | grep HTTP_STATUS: | cut -d':' -f2)
-            BODY=$(echo "$RESPONSE" | sed '/HTTP_STATUS:/d')
+            STATUS_HTTP=$(echo "$STATUS_RESPONSE" | grep HTTP_STATUS: | cut -d':' -f2)
+            STATUS_BODY=$(echo "$STATUS_RESPONSE" | sed '/HTTP_STATUS:/d')
 
-            echo "API Response: $BODY"
-            echo "HTTP Status: $HTTP_STATUS"
+            # Extract status (case insensitive)
+            STATUS=$(echo "$STATUS_BODY" | grep -i -o '"status":"[^"]*"' | cut -d'"' -f4 | tr '[:upper:]' '[:lower:]')
 
-            if [[ "$HTTP_STATUS" == "200" ]]; then
-              echo "✅ Attempt $ATTEMPT: Successfully triggered JitPack build!"
+            if [[ "$STATUS" == "ok" ]]; then
+              echo "✅ Build succeeded!"
+              exit 0
+            elif [[ "$STATUS" == "error" ]]; then
+              echo "❌ Build failed!"
+              exit 1
             else
-              echo "⚠️ Attempt $ATTEMPT: Failed with status $HTTP_STATUS"
-            fi
-
-            # Wait before next attempt (except after last one)
-            if [ $ATTEMPT -lt $ATTEMPTS ]; then
-              echo "Waiting $RETRY_INTERVAL seconds before next attempt..."
-              sleep $RETRY_INTERVAL
+              echo "🔄 Build in progress (status: ${STATUS:-unknown}), waiting 30 seconds..."
+              sleep 30
             fi
           done
-
-          echo "Completed all $ATTEMPTS API calls"
 
       - name: Monitor Build Status
         run: |
